@@ -1,0 +1,27 @@
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_03/S_Files/W_Macroses$ ./res ../../Test_Input/test1.txt test1.txt
+
+Read:		0.000112
+Calc:		0.000001
+Write:		0.000104
+Total:		0.000217
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_03/S_Files/W_Macroses$ ./res ../../Test_Input/test2.txt test2.txt
+
+Read:		0.000112
+Calc:		0.000003
+Write:		0.000111
+Total:		0.000226
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_03/S_Files/W_Macroses$ ./res ../../Test_Input/test3.txt test3.txt
+
+Read:		0.000106
+Calc:		0.000001
+Write:		0.000109
+Total:		0.000216
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_03/S_Files/W_Macroses$ ./res ../../Test_Input/test4.txt test4.txt
+
+Read:		0.000118
+Calc:		0.000001
+Write:		0.000102
+Total:		0.000221
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_03/S_Files/W_Macroses$ ./res ../../Test_Input/test5.txt test5.txt
+Wrong input!
+

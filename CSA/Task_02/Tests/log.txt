@@ -1,0 +1,36 @@
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test1.txt ./Tests/Test_Outputs/test1.txt
+
+Read:		0.000023
+Calc:		0.000003
+Write:		0.000038
+Total:		0.000064
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test2.txt ./Tests/Test_Outputs/test2.txt
+
+Read:		0.000042
+Calc:		0.000003
+Write:		0.000029
+Total:		0.000074
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test3.txt ./Tests/Test_Outputs/test3.txt
+
+Read:		0.000029
+Calc:		0.000000
+Write:		0.000026
+Total:		0.000055
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test4.txt ./Tests/Test_Outputs/test4.txt
+
+Read:		0.000033
+Calc:		0.000076
+Write:		0.000029
+Total:		0.000138
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test5.txt ./Tests/Test_Outputs/test5.txt
+
+Read:		0.000029
+Calc:		0.000001
+Write:		0.000028
+Total:		0.000058
+vngldkh@vngldkh-OMEN-Laptop-15-ek1xxx:~/ABC/IHW/Task_02$ ./result.out ./Tests/Test_Inputs/test6.txt ./Tests/Test_Outputs/test6.txt
+
+Read:		0.000029
+Calc:		0.000001
+Write:		0.000028
+Total:		0.000058

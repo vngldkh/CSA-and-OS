@@ -1,0 +1,336 @@
+# Гладких Иван Дмитриевич БПИ219
+## Вариант 11
+
+Разработать программу, вычисляющую с помощью степенного ряда
+с точностью не хуже 0,05% значение функции 1/(1-x) для заданного
+параметра x.
+
+> Разложение 1/(1-x) в степенной ряд существует для -1 < x < 1
+
+#### Задание решено на 8 баллов
+#
+
+> В программе реализовано 3 режима работы: ввод\вывод в консоли, работа с файлами, генерация данных + запись их в файл.
+#
+> Чтобы работать с консолью, нужно запустить программу без аргументов
+#
+> Чтобы работать с файлами, нужно при запуске в виде аргументов передать два пути: к файлу с входными данными, да файла, предназначенного для записи выходных данных
+#
+> Чтобы запустить случайную генерацию входных данных, нужно передать три аргумента: файл, куда записать сгенерированные входные данные, файл, куда записать результат работы, и ещё один любой аргумент.
+Его значение использоваться не будет, нужно только для того, чтобы кол-во аргументов отличлось от ввода из файла
+#
+
+### Исходный код на СИ
+[./C_Files/](./C_Files/)
+
+main.c
+```sh
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <math.h>
+
+extern double func(double x, int* iterations);
+extern int consoleInput(double* x);
+extern void consoleOutput(double x, int count);
+extern int fileInput(double* x, char **argv);
+extern int fileOutput(double x, int count, char **argv);
+extern double random_arg();
+extern int noteRandomInput(double x, char **argv);
+
+int main(int argc, char **argv) {
+	srand(time(NULL));
+	clock_t start_read, end_read, start_calc, end_calc, start_write, end_write;
+
+	// Проверяем на кол-во аргументов
+	if (argc == 2 || argc > 4) {
+		printf("Wrong number of arguments!\n");
+		return 1;
+	}
+
+	start_read = clock();
+	int res;
+	double x;
+	if (argc == 1) {
+		res = consoleInput(&x);
+	} else if (argc == 3) {
+		res = fileInput(&x, argv);
+	} else {
+		x = random_arg();
+		res = noteRandomInput(x, argv);
+	}
+	if (res == 1) {
+		printf("Wrong input!\n");
+		return 1;
+	} else if (res == 2) {
+		printf("The file doesn't exist or couldn't be read!\n");
+		return 2;
+	}
+	end_read = clock() - start_read;
+
+	start_calc = clock();
+	int iterations = 0;
+	double f = func(x, &iterations);
+	end_calc = clock() - start_calc;
+
+	start_write = clock();
+	if (argc == 1) {
+		consoleOutput(f, iterations);
+	} else {
+		if (fileOutput(f, iterations, argv) != 0) {
+			printf("The file couldn't be changed!\n");
+		}
+	}
+	end_write = clock() - start_write;
+
+	double time_read = ((double)end_read)/CLOCKS_PER_SEC;
+	double time_calc = ((double)end_calc)/CLOCKS_PER_SEC;
+	double time_write = ((double)end_write)/CLOCKS_PER_SEC;
+	double total = time_read + time_calc + time_write;
+	printf("\nRead:\t\t%f\n", time_read);
+	printf("Calc:\t\t%f\n", time_calc);
+	printf("Write:\t\t%f\n", time_write);
+	printf("Total:\t\t%f\n", total);
+}
+```
+
+funcs.c
+```sh
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <math.h>
+
+double func(double x, int* iterations) {
+	double new = 1 + x;
+	double prev = 1;
+	double summand = x;
+	*iterations = 0;
+	do {
+		summand *= x;
+		prev = new;
+		new += summand;
+		++(*iterations);
+	} while (fabs(new - prev) > 0.0000001);
+	return new;
+}
+
+int consoleInput(double* x) {
+	printf("x? ");
+	scanf("%lf", x);
+	if (*x <= -1 || *x >= 1) {
+		return 1;
+	}
+	return 0;
+}
+
+void consoleOutput(double x, int count) {
+	printf("1/(1-x) = %lf\n", x);
+	printf("iterations: %d", count);
+}
+
+int fileInput(double* x, char **argv) {
+	FILE *fin = fopen(argv[1], "r");
+	if (fin == NULL) {
+		return 2;
+	}
+	fscanf(fin, "%lf", x);
+	if (*x <= -1 || *x >= 1) {
+		return 1;
+	}
+	fclose(fin);
+	return 0;
+}
+
+int fileOutput(double x, int count, char **argv) {
+	FILE *fout;
+    fout = fopen(argv[2], "w");
+    if (fout == NULL) {
+		return 1;
+	}	
+	fprintf(fout, "1/(1-x) = %lf\n", x);
+	fprintf(fout, "iterations: %d", count);
+	return 0;
+}
+
+double random_arg() {
+	double min = -1;
+	double max = 1;
+	double x = min + (max - min) / RAND_MAX * rand();
+	printf("%lf", x);
+	return x;
+}
+
+int noteRandomInput(double x, char **argv) {
+	FILE *fin = fopen(argv[1], "w");
+	if (fin == NULL) {
+		return 2;
+	}
+	fprintf(fin, "%lf", x);
+	fclose(fin);
+	return 0;
+}
+```
+
+### Входные тестовые данные
+
+[./Test_Input/](./Test_Input)
+
+**Тест 1**
+```sh
+0.09
+Эталонный ответ: 1.098901
+```
+**Тест 2**
+```sh
+0.876
+Эталонный ответ: 8.064516129
+```
+**Тест 3**
+```sh
+-0.0214
+Эталонный ответ: 0.979048
+```
+**Тест 4**
+```sh
+0.0004
+Эталонный ответ: 1.0004
+```
+**Тест 5**
+```sh
+14
+Для такого x разложения не существует
+```
+
+### Ход работы
+
+Программа была откомпилирована без оптимизирующих и отладочных опций
+```sh
+$gcc -c funcs.c main.c
+$gcc funcs.o main.o -o res
+```
+Полученные файлы: [./Compilation/](./Compilation)
+
+Затем запущена и протестирована
+
+**Результаты тестов: [./Compilation/Test_Output/](./Compilation/Test_Output/)**
+Тест | Входные данные | Результат работы |Время чтения|Время подсчёта|Время записи|Всего
+-----|----------------|------------------|-------------|--------------|-----------|-
+1    |0.09|1.098901|0.000097|0.000000|0.000116|0.000213
+2    |0.876|8.064515|0.000105|0.000003|0.000110|0.000218
+3    |-0.0214|0.979048|0.000102|0.000001|0.000123|0.000226
+4    |0.0004|1.000400|0.000102|0.000001|0.000110|0.000213
+5    |14|Wrong input!|-|-|-|-
+
+> Все значения приближены к эталонным в пределах допустимой погрешности. 
+> Значит, программа работает корректно.
+
+Программа была ассемблирована без опций оптимизации
+```sh
+$gcc -S -O0 -masm=intel funcs.c main.c
+```
+Полученные файлы: [./S_Files/W_Macroses/](./S_Files/W_Macroses/)
+- main.c > main.s - [./S_Files/W_Macroses/main.s](./S_Files/W_Macroses/main.s)
+- funcs.c > funcs.s - [./S_Files/W_Macroses/vowels.s](./S_Files/W_Macroses/funcs.s)
+
+Затем были получены объектные файлы
+```sh
+$as main.s -o main.o
+$as funcs.s -o vowels.o
+```
+Далее был получен исполняемый файл
+```sh
+$gcc funcs.o main.o -o res
+```
+Полученный исполняемый файл был запущен и протестирован
+
+**Результаты тестов: [./S_Files/W_Macroses/Test_Output/](./S_Files/W_Macroses/Test_Output/)**
+Тест | Входные данные | Результат работы |Время чтения|Время подсчёта|Время записи|Всего
+-----|----------------|------------------|-------------|--------------|-----------|-
+1    |0.09|1.098901|0.000112|0.000001|0.000104|0.000217
+2    |0.876|8.064515|0.000112|0.000003|0.000111|0.000226
+3    |-0.0214|0.979048|0.000106|0.000001|0.000109|0.000216
+4    |0.0004|1.000400|0.000118|0.000001|0.000102|0.000221
+5    |14|Wrong input!|-|-|-|-
+
+> Результаты тестовых прогонов совпадают с предыдущими.
+> Значит эти программы функционально эквивалентны.
+
+> Время работы отличается незначительно
+
+Программа была откомпилирована с ключём *-fno-asynchronous-unwind-tables*, чтобы убрать лишние макросы
+```sh
+$gcc -S -O0 -masm=intel -fno-asynchronous-unwind-tables funcs.c main.c
+```
+Полученные файлы: [./S_Files/WO_Macroses/](./S_Files/WO_Macroses/)
+- main.c > main.s - [./S_Files/WO_Macroses/main.s](./S_Files/WO_Macroses/main.s)
+- funcs.c > funcs.s - [./S_Files/WO_Macroses/funcs.s](./S_Files/WO_Macroses/funcs.s)
+
+**В ассемблерные файлы были добавлены комментарии**
+
+Затем были получены объектные файлы
+```sh
+$as main.s -o main.o
+$as funcs.s -o vowels.o
+```
+Далее был получен исполняемый файл
+```sh
+$gcc funcs.o main.o -o res
+```
+Полученный исполняемый файл был запущен и протестирован
+
+**Результаты тестов: [./S_Files/WO_Macroses/Test_Output/](./S_Files/WO_Macroses/Test_Output/)**
+Тест | Входные данные | Результат работы |Время чтения|Время подсчёта|Время записи|Всего
+-----|----------------|------------------|-------------|--------------|-----------|-
+1    |0.09|1.098901|0.000057|0.000001|0.000069|0.000127
+2    |0.876|8.064515|0.000114|0.000002|0.000114 |0.000230
+3    |-0.0214|0.979048|0.000109|0.000001|0.000112|0.000222
+4    |0.0004|1.000400|0.000118|0.000001|0.000112|0.000231
+5    |14|Wrong input!|-|-|-|-
+
+> Результаты тестовых прогонов совпадают с предыдущими.
+> Значит эти программы функционально эквивалентны.
+
+> Время работы отличается незначительно
+#
+**Ассемблерный код был оптимизорван посредством использования регистров вместо обращения к динамической памяти**
+
+Полученные файлы: [./S_Files/Optimized/](./S_Files/Optimized/)
+- main.c > main.s - [./S_Files/Optimized/main.s](./S_Files/Optimized/main.s)
+- funcs.c > funcs.s - [./S_Files/Optimized/funcs.s](./S_Files/Optimized/funcs.s)
+
+**В эти файлы были добавлены соответствующие комментарии, поясняющие эквивалентное использование регистров**
+
+Затем были получены объектные файлы
+```sh
+$as main.s -o main.o
+$as funcs.s -o vowels.o
+```
+Далее был получен исполняемый файл
+```sh
+$gcc funcs.o main.o -o res
+```
+Полученный исполняемый файл был запущен и протестирован
+
+**Результаты тестов: [./S_Files/Optimized/Test_Output/](./S_Files/Optimized/Test_Output/)**
+Тест | Входные данные | Результат работы |Время чтения|Время подсчёта|Время записи|Всего
+-----|----------------|------------------|-------------|--------------|-----------|-
+1    |0.09|1.098901|0.000104|0.000001|0.000119|0.000224
+2    |0.876|8.064515|0.000104|0.000002|0.000125|0.000231
+3    |-0.0214|0.979048|0.000097|0.000002|0.000128|0.000227
+4    |0.0004|1.000400|0.000102|0.000000|0.000142|0.000244
+5    |14|Wrong input!|-|-|-|-
+
+> Результаты тестовых прогонов совпадают с предыдущими.
+> Значит эти программы функционально эквивалентны.
+
+> Время работы очень мало, поэтому погрешность играет большую роль. 
+> Из-за этого незаметно ускорения работы программы
+
+### Сравнение размеров объектных файлов
+
+Этап \ Файл|main.o|funcs.o
+---|---|---
+С макросами|3 504 байта|4 136 байт
+Без макросов|3 256 байт|3 552 байта
+Оптимизированная|3 632 байта|3 648 байт
