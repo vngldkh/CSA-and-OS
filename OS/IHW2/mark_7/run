@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec "./p0" & exec "./p1" & exec "./p2"
